@@ -3,15 +3,14 @@ package ru.klimov.wordgame;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 public class WordGame {
     public static String word;
     public static boolean[] guessedLetters;
-    public static int errors;
+    public static HashSet wrongLetters = new HashSet();
+    public static String validChars = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+    //public static int errors;
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -53,7 +52,8 @@ public class WordGame {
             }
         }
         else {
-            errors++;
+            //errors++;
+            wrongLetters.add(letter);
             System.out.println("Буква '" + letter + "' отсутствует в слове!");
         }
     }
@@ -62,7 +62,7 @@ public class WordGame {
         // отображение виселицы
         System.out.println("_____");
         System.out.println("|   |");
-        switch (errors){
+        switch (wrongLetters.size()){
             case 0:
                 System.out.println("|");
                 System.out.println("|");
@@ -131,7 +131,7 @@ public class WordGame {
 
     public static void gameOver(){
         if (isDefeat()){
-            System.out.println("ВЫ ВЫИГРАЛИ!");
+            System.out.println("ВЫ ПРОИГРАЛИ!");
         }
         else{
             System.out.println("ВЫ ВЫИГРАЛИ!");
@@ -152,11 +152,11 @@ public class WordGame {
     }
 
     public static boolean isDefeat(){
-        return errors >= 6;
+        return wrongLetters.size() >= 6;
     }
 
     public static boolean isLetterInput(String line){
-        if (line.length() != 1){
+        if ((line.length() != 1) || (!validChars.contains(line))){
             System.out.println("Ошибка! Введите букву.");
             return false;
         }
@@ -170,7 +170,7 @@ public class WordGame {
         String line;
         char letter;
         word = chooseRandomWord();
-        errors = 0;
+        //errors = 0;
         guessedLetters = new boolean[word.length()];
         displayHuman();
         while (!isVictory() && !isDefeat()){
